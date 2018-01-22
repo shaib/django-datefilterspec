@@ -46,7 +46,7 @@ FILTER_PREFIX = 'drf__'
 
 
 def clean_input_prefix(input_):
-    return dict((key.split(FILTER_PREFIX)[1] if key.startswith(FILTER_PREFIX) else key, val)
+    return dict((key.split(FILTER_PREFIX,1)[1] if key.startswith(FILTER_PREFIX) else key, val)
                 for (key, val) in input_.items())
 
 
@@ -103,12 +103,6 @@ class DateRangeForm(DateRangeFilterBaseForm):
             required=False,
         )
 
-    # Django 1.4 can't handle media inheritance well. We have to do it manually.
-    if django.VERSION < (1, 5):
-        @property
-        def media(self):
-            return super(DateRangeForm, self).media
-
 
 class DateTimeRangeForm(DateRangeFilterBaseForm):
 
@@ -116,7 +110,7 @@ class DateTimeRangeForm(DateRangeFilterBaseForm):
         field_name = kwargs.pop('field_name')
         super(DateTimeRangeForm, self).__init__(*args, **kwargs)
 
-        self.fields['%s%s__gte' % (FILTER_PREFIX, field_name)] = forms.DateTimeField(
+        self.fields['%s%s__gte' % (FILTER_PREFIX, field_name)] = forms.SplitDateTimeField(
             label='',
             widget=DateRangeFilterAdminSplitDateTime(
                 attrs={'placeholder': _('From date')}
@@ -125,7 +119,7 @@ class DateTimeRangeForm(DateRangeFilterBaseForm):
             required=False
         )
 
-        self.fields['%s%s__lte' % (FILTER_PREFIX, field_name)] = forms.DateTimeField(
+        self.fields['%s%s__lte' % (FILTER_PREFIX, field_name)] = forms.SplitDateTimeField(
             label='',
             widget=DateRangeFilterAdminSplitDateTime(
                 attrs={'placeholder': _('To date')},
@@ -133,12 +127,6 @@ class DateTimeRangeForm(DateRangeFilterBaseForm):
             localize=True,
             required=False
         )
-
-    # Django 1.4 can't handle media inheritance well. We have to do it manually.
-    if django.VERSION < (1, 5):
-        @property
-        def media(self):
-            return super(DateTimeRangeForm, self).media
 
 
 class DateRangeFilter(admin.filters.FieldListFilter):
@@ -152,17 +140,7 @@ class DateRangeFilter(admin.filters.FieldListFilter):
         self.form = self.get_form(request)
 
     def choices(self, cl):
-        """
-        Pop the original parameters, and return the date filter & other filter
-        parameters.
-        """
-        
-        hidden_params = copy.deepcopy(cl.params)
-        hidden_params.pop(self.lookup_kwarg_since, None)
-        hidden_params.pop(self.lookup_kwarg_upto, None)
-        return ({
-            'get_query': hidden_params,
-        }, )
+        return []
 
     def expected_parameters(self):
         return [self.lookup_kwarg_since, self.lookup_kwarg_upto]

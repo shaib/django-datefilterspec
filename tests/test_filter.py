@@ -98,8 +98,8 @@ class DateTimeRangeFormTest(TestCase):
     def test_create_fields(self):
         form = self.DummyForm(Mock(), field_name='spam')
 
-        self.assertIsInstance(form.fields['drf__spam__gte'], forms.DateTimeField)
-        self.assertIsInstance(form.fields['drf__spam__lte'], forms.DateTimeField)
+        self.assertIsInstance(form.fields['drf__spam__gte'], forms.SplitDateTimeField)
+        self.assertIsInstance(form.fields['drf__spam__lte'], forms.SplitDateTimeField)
 
     def test_field_attributes(self):
         form = self.DummyForm(Mock(), field_name='ham')
