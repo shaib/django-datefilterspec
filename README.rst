@@ -1,8 +1,8 @@
 ABANDONED
 =========
 
-Check this PR to get more info: https://github.com/tzulberti/django-datefilterspec/pull/17
-
+We recommend that users of this package use django-admin-rangefilter from 
+https://github.com/silentsokolov/django-admin-rangefilter instead.
 
 
 .. image:: https://travis-ci.org/tzulberti/django-datefilterspec.svg?branch=master
